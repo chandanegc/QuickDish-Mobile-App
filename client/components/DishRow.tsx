@@ -8,8 +8,11 @@ import {
 } from "react-native";
 import { themeColors } from "@/theme";
 import { Feather } from "@expo/vector-icons";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart, removeFromCart, selectCartItemsById } from "@/slice/cartSlice";
 
 type DishItem = {
+  id:Number;
   name: string;
   description: string;
   price: number;
@@ -21,6 +24,14 @@ type DishRowProps = {
 };
 
 export default function DishRow({ item }: DishRowProps) {
+  const dispatch = useDispatch();
+  const totalItems = useSelector(state=>selectCartItemsById(state, item.id));
+  const handleIncrease = () => {
+    dispatch(addToCart({ ...item }));
+  };
+  const handleDecrease = () => {
+    dispatch(removeFromCart({ id:item.id}));
+  };
   return (
     <View className="flex-row items-center bg-white rounded-3xl shadow-2xl mb-3 mx-2 p-3 space-x-4">
       <Image
@@ -36,15 +47,18 @@ export default function DishRow({ item }: DishRowProps) {
           <Text className="text-gray-700 text-lg font-bold">${item.price}</Text>
           <View className="flex-row items-center">
             <TouchableOpacity
+              onPress={() => handleIncrease()}
               className="p-1 rounded-full"
               style={{ backgroundColor: themeColors.bgColor(1) }}
             >
               <Feather name="plus" size={20} color={"white"} />
             </TouchableOpacity>
-            <Text className="px-3">{2}</Text>
+            <Text className="px-3">{totalItems.length}</Text>
             <TouchableOpacity
+              onPress={() => handleDecrease()}
               className="p-1 rounded-full"
-              style={{ backgroundColor: themeColors.bgColor(1) }}
+              disabled={!totalItems.length}
+              style={{ backgroundColor: themeColors.bgColor(totalItems.length?1:0.5) }}
             >
               <Feather name="minus" size={20} color={"white"} />
             </TouchableOpacity>

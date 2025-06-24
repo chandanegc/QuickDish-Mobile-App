@@ -1,20 +1,33 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-import { useNavigation } from "@react-navigation/native";
-import restaurent from "./restaurent";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { themeColors } from "@/theme";
 import { Feather } from "@expo/vector-icons";
+import { useDispatch } from "react-redux";
+import { emptyCart } from "@/slice/cartSlice";
+
+type RootStackParamList = {
+  index: undefined;
+};
 
 export default function Delivery() {
-  const navigation = useNavigation();
-  const restaurentDetails = restaurent?.[0] ?? {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const restaurentDetails: {
+    lat: number;
+    lng: number;
+    name: string;
+    description: string;
+  } = {
     lat: 26.850417,
     lng: 81.007494,
     name: "Choco Bar",
     description: "Delicious ice cream",
   };
-
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(emptyCart());
+  }, []);
   return (
     <View className="flex-1">
       <View style={styles.container}>
@@ -55,7 +68,10 @@ export default function Delivery() {
             </Text>
           </View>
 
-          <Image className="w-24 h-24" source={require("../assets/images/delivery-boy.gif")} />
+          <Image
+            className="w-24 h-24"
+            source={require("../assets/images/delivery-boy.gif")}
+          />
         </View>
 
         <View
@@ -79,10 +95,16 @@ export default function Delivery() {
 
           {/* Icons with gap */}
           <View className="flex-row gap-2">
-            <TouchableOpacity className="bg-white p-2 rounded-full">
+            <TouchableOpacity
+              onPress={() => navigation.navigate("index")}
+              className="bg-white p-2 rounded-full"
+            >
               <Feather name="phone" color={themeColors.bgColor(1)} size={30} />
             </TouchableOpacity>
-            <TouchableOpacity  className="bg-white  p-2 rounded-full">
+            <TouchableOpacity
+              onPress={() => navigation.navigate("index")}
+              className="bg-white  p-2 rounded-full"
+            >
               <Feather name="x" color="red" size={30} />
             </TouchableOpacity>
           </View>

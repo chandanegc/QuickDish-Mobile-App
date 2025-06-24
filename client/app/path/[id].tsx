@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -7,15 +7,26 @@ import {
   TouchableOpacity,
   ImageSourcePropType,
 } from "react-native";
-import { useRoute } from "@react-navigation/native";
+import { useRoute, RouteProp } from "@react-navigation/native";
 import { useNavigation } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { themeColors } from "@/theme";
 import DishRow from "@/components/DishRow";
 import CartIcon from "@/components/CartIcon";
 import { StatusBar } from "expo-status-bar";
-import { dishItem } from "@/assets/helper";
+import { useDispatch, useSelector } from "react-redux";
+import { setRestaurent } from "@/slice/restaurentSlice";
 
+// ✅ Type for a single dish item
+type Dish = {
+  id: string;
+  name: string;
+  price: number;
+  image: ImageSourcePropType;
+  description?: string;
+};
+
+// ✅ Define the route params type
 type RestaurantParams = {
   id: string;
   image: ImageSourcePropType;
@@ -25,19 +36,30 @@ type RestaurantParams = {
   reviews?: string;
   category?: string;
   address?: string;
+  dish?: Dish[];
 };
 
-const items = dishItem;
-
 export default function RestaurantDetails() {
-  const route = useRoute();
-  const item = route.params as RestaurantParams;
+  const route = useRoute<RouteProp<Record<string, RestaurantParams>, string>>();
+  const item = route.params;
+
   const navigation = useNavigation();
+
+  // ✅ Use proper typed useSelector
+  const { restaurent } = useSelector((state: any) => state.restaurent);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (item && item.id) {
+      dispatch(setRestaurent({ ...item }));
+    }
+  }, [dispatch, item]);
 
   return (
     <View>
-      <CartIcon/>
-      <StatusBar style="light"/>
+      <CartIcon />
+      <StatusBar style="light" />
+
       <ScrollView>
         <View className="relative">
           <Image className="w-full h-72" source={item.image} />
@@ -59,7 +81,7 @@ export default function RestaurantDetails() {
             borderTopRightRadius: 40,
             borderTopLeftRadius: 40,
             borderWidth: 1,
-            borderBottomWidth: 0
+            borderBottomWidth: 0,
           }}
           className="bg-white mt-[-40] pt-6"
         >
@@ -96,7 +118,8 @@ export default function RestaurantDetails() {
 
         <View className="pb-36 bg-white">
           <Text className="px-4 py-4 text-2xl font-bold">Menu</Text>
-          {items.map((dish, index) => (
+
+          {restaurent?.dish?.map((dish: Dish, index: number) => (
             <DishRow key={index} item={dish} />
           ))}
         </View>

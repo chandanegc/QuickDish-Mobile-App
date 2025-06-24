@@ -16,6 +16,11 @@
         "foregroundImage": "./assets/images/quick-dish.png",
         "backgroundColor": "#ffffff"
       },
+       "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyCFdexBkSqCAYKoJpfpP9wBHSk7c8E_D6o"
+        }
+      },
       "edgeToEdgeEnabled": true,
       "package": "com.chandanegc.quickdish"
     },

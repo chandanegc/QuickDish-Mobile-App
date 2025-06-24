@@ -1,7 +1,30 @@
-import { View, Text, TouchableOpacity, Platform, StyleSheet } from "react-native";
 import React from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Platform,
+  StyleSheet,
+} from "react-native";
 import { themeColors } from "@/theme";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { useSelector } from "react-redux";
+import { selectTotal } from "@/slice/cartSlice";
+
+type RootStackParamList = {
+  cart: undefined;
+};
+
+interface RootState {
+  cart: {
+    items: {
+      id: string;
+      name: string;
+      price: number;
+      image: any;
+    }[];
+  };
+}
 
 interface CartIconProps {
   itemCount?: number;
@@ -9,14 +32,22 @@ interface CartIconProps {
   onPress?: () => void;
 }
 
-export default function CartIcon({
-  itemCount = 0,
-  totalPrice = 10,
-}: CartIconProps) {
-  const navigate = useNavigation();
+export default function CartIcon({}: CartIconProps) {
+  const itemCount = useSelector((state: RootState) => state.cart.items.length);
+  const totalPrice = useSelector((state: RootState) => selectTotal(state));
+
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+  if (!itemCount) return <></>;
+
   return (
-    <View style={[styles.container, { bottom: Platform.OS === "android" ? 25 : 5 }]}>
-      <TouchableOpacity onPress={()=>navigate.navigate("cart")} style={[styles.button, { backgroundColor: themeColors.bgColor(1) }]}>
+    <View
+      style={[styles.container, { bottom: Platform.OS === "android" ? 25 : 5 }]}
+    >
+      <TouchableOpacity
+        onPress={() => navigation.navigate("cart")}
+        style={[styles.button, { backgroundColor: themeColors.bgColor(1) }]}
+      >
         <View style={styles.badge}>
           <Text style={styles.text}>{itemCount}</Text>
         </View>
