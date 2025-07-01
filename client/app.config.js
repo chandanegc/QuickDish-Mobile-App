@@ -1,4 +1,5 @@
-{
+require('dotenv').config();
+module.exports={
   "expo": {
     "name": "Quick Dish",
     "slug": "quick-dish",
@@ -18,7 +19,7 @@
       },
        "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyCFdexBkSqCAYKoJpfpP9wBHSk7c8E_D6o"
+          "apiKey": process.env.GOOGLE_MAPS_API_KEY
         }
       },
       "edgeToEdgeEnabled": true,

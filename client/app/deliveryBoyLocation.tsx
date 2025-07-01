@@ -1,53 +1,82 @@
-import React, { useEffect } from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
-import MapView, { Marker } from "react-native-maps";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
+import React, { useEffect, useRef } from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Linking,
+} from "react-native";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { useNavigation } from "@react-navigation/native";
 import { themeColors } from "@/theme";
 import { Feather } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
 import { emptyCart } from "@/slice/cartSlice";
 
-type RootStackParamList = {
-  index: undefined;
-};
-
 export default function Delivery() {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const restaurentDetails: {
-    lat: number;
-    lng: number;
-    name: string;
-    description: string;
-  } = {
+  const navigation = useNavigation<any>();
+  const mapRef = useRef<MapView>(null);
+  const restaurantDetails = {
     lat: 26.850417,
     lng: 81.007494,
     name: "Choco Bar",
     description: "Delicious ice cream",
   };
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(emptyCart());
+
+    if (mapRef.current) {
+      mapRef.current.animateToRegion(
+        {
+          latitude: restaurantDetails.lat,
+          longitude: restaurantDetails.lng,
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.005,
+        },
+        1000
+      );
+    }
   }, []);
+
+  const handleCall = () => {
+    Linking.openURL(`tel:${1234567890}`);
+  };
+
+  const handleCancel = () => {
+    navigation.navigate("index");
+  };
+
   return (
     <View className="flex-1">
       <View style={styles.container}>
         <MapView
+          ref={mapRef}
+          provider={PROVIDER_GOOGLE}
           style={styles.map}
           mapType="standard"
           initialRegion={{
-            latitude: restaurentDetails.lat,
-            longitude: restaurentDetails.lng,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01,
+            latitude: restaurantDetails.lat,
+            longitude: restaurantDetails.lng,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
           }}
+          minZoomLevel={15}
+          maxZoomLevel={18}
+          loadingEnabled={true}
+          moveOnMarkerPress={false}
+          loadingIndicatorColor={themeColors.bgColor(1)}
+          loadingBackgroundColor="#ffffff"
         >
           <Marker
-            title={restaurentDetails.name}
-            description={restaurentDetails.description}
+            title={restaurantDetails.name}
+            description={restaurantDetails.description}
             pinColor={themeColors.bgColor(1)}
             coordinate={{
-              latitude: restaurentDetails.lat,
-              longitude: restaurentDetails.lng,
+              latitude: restaurantDetails.lat,
+              longitude: restaurantDetails.lng,
             }}
           />
         </MapView>
@@ -70,7 +99,7 @@ export default function Delivery() {
 
           <Image
             className="w-24 h-24"
-            source={require("../assets/images/delivery-boy.gif")}
+            source={require("../assets/delivery-boy.jpg")}
           />
         </View>
 
@@ -84,7 +113,7 @@ export default function Delivery() {
           >
             <Image
               className="h-16 w-16 rounded-full"
-              source={require("../assets/images/delivery-boy.gif")}
+              source={require("../assets/delivery-boy.jpg")}
             />
           </View>
 
@@ -93,17 +122,16 @@ export default function Delivery() {
             <Text className="text-white text-sm">Your delivery partner</Text>
           </View>
 
-          {/* Icons with gap */}
           <View className="flex-row gap-2">
             <TouchableOpacity
-              onPress={() => navigation.navigate("index")}
+              onPress={handleCall}
               className="bg-white p-2 rounded-full"
             >
               <Feather name="phone" color={themeColors.bgColor(1)} size={30} />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => navigation.navigate("index")}
-              className="bg-white  p-2 rounded-full"
+              onPress={handleCancel}
+              className="bg-white p-2 rounded-full"
             >
               <Feather name="x" color="red" size={30} />
             </TouchableOpacity>

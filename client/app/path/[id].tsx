@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import CartIcon from "@/components/CartIcon";
 import { StatusBar } from "expo-status-bar";
 import { useDispatch, useSelector } from "react-redux";
 import { setRestaurent } from "@/slice/restaurentSlice";
+import { getDishes } from "@/api";
 
 // ✅ Type for a single dish item
 type Dish = {
@@ -42,7 +43,7 @@ type RestaurantParams = {
 export default function RestaurantDetails() {
   const route = useRoute<RouteProp<Record<string, RestaurantParams>, string>>();
   const item = route.params;
-
+  const [dishes, setDishes] = useState([]);
   const navigation = useNavigation();
 
   // ✅ Use proper typed useSelector
@@ -50,11 +51,11 @@ export default function RestaurantDetails() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    getDishes().then((data) => setDishes(data));
     if (item && item.id) {
       dispatch(setRestaurent({ ...item }));
     }
   }, [dispatch, item]);
-
   return (
     <View>
       <CartIcon />
@@ -119,7 +120,7 @@ export default function RestaurantDetails() {
         <View className="pb-36 bg-white">
           <Text className="px-4 py-4 text-2xl font-bold">Menu</Text>
 
-          {restaurent?.dish?.map((dish: Dish, index: number) => (
+          {dishes?.map((dish: Dish, index: number) => (
             <DishRow key={index} item={dish} />
           ))}
         </View>

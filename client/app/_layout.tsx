@@ -29,11 +29,6 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
-          name="orderPrepairing"
-          options={{ headerShown: false, presentation: "fullScreenModal" }}
-        />
-
-        <Stack.Screen
           name="deliveryBoyLocation"
           options={{
             headerShown: false,

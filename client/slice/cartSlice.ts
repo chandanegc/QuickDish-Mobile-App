@@ -25,7 +25,7 @@ const cartSlice = createSlice({
     removeFromCart(state, action: PayloadAction<{ id: string }>) {
       let newCart = [...state.items];
       const itemIndex = state.items.findIndex(
-        (item) => item.id === action.payload.id
+        (item) => item._id === action.payload.id
       );
       if (itemIndex !== -1) {
         newCart.splice(itemIndex, 1);
@@ -45,15 +45,15 @@ export const { addToCart, removeFromCart, emptyCart } = cartSlice.actions;
 export const selectCartItems = (state: { cart: CartState }) => state.cart.items;
 
 export const selectTotal = (state: { cart: CartState }) =>
-  state.cart.items.reduce((total, item) => total + item.price, 0);
+  state.cart.items.reduce((total, item) => total + parseFloat(item.price), 0);
 
 // Memoized selector to avoid unnecessary rerenders
 export const selectCartItemsById = createSelector(
   [
-    (state: { cart: CartState }) => state.cart.items,
+    (state: { cart: CartState }) => state.cart.items, 
     (_: { cart: CartState }, id: string) => id,
   ],
-  (items, id) => items.filter((item) => item.id === id)
+  (items, id) => items.filter((item) => item._id === id)
 );
 
 export default cartSlice.reducer;

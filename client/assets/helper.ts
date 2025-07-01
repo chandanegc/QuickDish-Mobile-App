@@ -49,6 +49,13 @@ export const feature: FeatureRowProps = {
   description: "Popular restaurants near you",
   restaurants: [
     {
+      id: 2,
+      name: "KFC",
+      image: require("./images/restaurants/bdcd233971b7c81bf77e1fa4471280eb (1).webp"),
+      description: "Taste the best burgers in town with a variety of toppings.",
+      dish:dishItem
+    },
+    {
       id: 1,
       name: "Pizza Place",
       image: require("./images/restaurants/disadvantages-of-fast-food (1).webp"),
@@ -56,16 +63,9 @@ export const feature: FeatureRowProps = {
       dish:dishItem
     },
     {
-      id: 2,
-      name: "Burger House",
-      image: require("./images/restaurants/disadvantages-of-fast-food (1).webp"),
-      description: "Taste the best burgers in town with a variety of toppings.",
-      dish:dishItem
-    },
-    {
       id: 3,
       name: "Sushi World",
-      image: require("./images/restaurants/disadvantages-of-fast-food (1).webp"),
+      image: require("./images/restaurants/rawImage (1).jpg"),
       dish:dishItem,
       description: "Fresh and authentic sushi prepared by expert chefs.",
     },

@@ -9,10 +9,15 @@ import {
 import { themeColors } from "@/theme";
 import { Feather } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart, removeFromCart, selectCartItemsById } from "@/slice/cartSlice";
+import {
+  addToCart,
+  removeFromCart,
+  selectCartItemsById,
+} from "@/slice/cartSlice";
+import { urlFor } from "@/sanity";
 
 type DishItem = {
-  id:Number;
+  id: string;
   name: string;
   description: string;
   price: number;
@@ -23,20 +28,23 @@ type DishRowProps = {
   item: DishItem;
 };
 
-export default function DishRow({ item }: DishRowProps) {
+function DishRow({ item }: DishRowProps) {
   const dispatch = useDispatch();
-  const totalItems = useSelector(state=>selectCartItemsById(state, item.id));
+  const totalItems = useSelector((state) =>
+    selectCartItemsById(state, item._id)
+  );
   const handleIncrease = () => {
     dispatch(addToCart({ ...item }));
   };
   const handleDecrease = () => {
-    dispatch(removeFromCart({ id:item.id}));
+    dispatch(removeFromCart({ id: item._id })); 
   };
   return (
     <View className="flex-row items-center bg-white rounded-3xl shadow-2xl mb-3 mx-2 p-3 space-x-4">
       <Image
-        style={{ height: 100, width: 100, borderRadius: 16 }}
-        source={item.image}
+        style={{ height: 80, width: 80, borderRadius: 16 }}
+        source={{ uri: urlFor(item.image).url() }}
+        className="mr-5"
       />
       <View className="flex-1 space-y-3">
         <View>
@@ -58,7 +66,11 @@ export default function DishRow({ item }: DishRowProps) {
               onPress={() => handleDecrease()}
               className="p-1 rounded-full"
               disabled={!totalItems.length}
-              style={{ backgroundColor: themeColors.bgColor(totalItems.length?1:0.5) }}
+              style={{
+                backgroundColor: themeColors.bgColor(
+                  totalItems.length ? 1 : 0.5
+                ),
+              }}
             >
               <Feather name="minus" size={20} color={"white"} />
             </TouchableOpacity>
@@ -68,3 +80,5 @@ export default function DishRow({ item }: DishRowProps) {
     </View>
   );
 }
+
+export default React.memo(DishRow);

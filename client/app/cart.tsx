@@ -5,6 +5,7 @@ import { themeColors } from "@/theme";
 import { Feather } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { removeFromCart, selectTotal } from "@/slice/cartSlice";
+import OrderPrepairingScreen from "@/components/orderPrepairing";
 
 type RootStackParamList = {
   cart: undefined;
@@ -26,7 +27,7 @@ interface RootState {
 
 export default function Cart() {
   const [groupItems, setGroupItems] = useState<Record<string, CartItem[]>>({});
-
+  const [isTogleDisplay, setIsTogleDisplay] = useState(false);
   const cartItem = useSelector((state: RootState) => state.cart.items);
 
   const dispatch = useDispatch();
@@ -39,16 +40,19 @@ export default function Cart() {
   };
 
   useEffect(() => {
+    setIsTogleDisplay(false);
     const items = cartItem.reduce((group: Record<string, CartItem[]>, item) => {
-      if (group[item.id]) {
-        group[item.id].push(item);
+      if (group[item._id]) {
+        group[item._id].push(item);
       } else {
-        group[item.id] = [item];
+        group[item._id] = [item];
       }
       return group;
     }, {});
     setGroupItems(items);
   }, [cartItem]);
+
+  if(isTogleDisplay)return <OrderPrepairingScreen/>;
 
   return (
     <View className="bg-white pt-10 flex-1">
@@ -107,7 +111,7 @@ export default function Cart() {
                   ${item.price}
                 </Text>
                 <TouchableOpacity
-                  onPress={() => handleDecrease(item.id)}
+                  onPress={() => handleDecrease(item._id)}
                   className="p-1 rounded-full"
                   style={{ backgroundColor: themeColors.bgColor(1) }}
                 >
@@ -149,9 +153,7 @@ export default function Cart() {
           <TouchableOpacity
             style={{ backgroundColor: themeColors.bgColor(1) }}
             className="p-3 mt-2 rounded-full"
-            onPress={() => {
-              navigation.navigate("orderPrepairing");
-            }}
+            onPress={() => setIsTogleDisplay(true)}
           >
             <Text className="text-white text-center font-bold text-lg">
               Place Order
